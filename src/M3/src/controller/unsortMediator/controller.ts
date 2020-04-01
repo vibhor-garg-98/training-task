@@ -33,42 +33,6 @@ class MediatorController {
     }
   };
 
-  put = async (req: Request, res: Response) => {
-    const { id } = req.body;
-    const response = await axios.get('http://localhost:9000/api/unsortCreate', {
-      params: {
-        id
-      }
-    });
-
-    const sortObject: any = await axios({
-      method: 'post',
-      url: 'http://localhost:9001/api/sorting/',
-      data: {
-        data: response.data.data
-      }
-    });
-    const { data } = sortObject.data;
-    const { newObj, sortTime } = data;
-    const updateData = await axios({
-      method: 'put',
-      url: 'http://localhost:9000/api/unsortCreate/',
-      data: {
-        data: { id },
-        dataToUpdate: { obj: newObj }
-      }
-    });
-    const createSortStats = await axios({
-      method: 'post',
-      url: 'http://localhost:9000/api/sortStats/',
-      data: {
-        data: { id, sortDuration: sortTime }
-      }
-    });
-
-    SystemResponse.success(res, updateData.data.data, 'update this');
-  };
-
   list = async (req: Request, res: Response) => {
     const response = await axios.get('http://localhost:9000/api/unsortCreate');
 

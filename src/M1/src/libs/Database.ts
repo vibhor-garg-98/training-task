@@ -10,7 +10,7 @@ class DataBase {
                     reject(err);
                 }
                 resolve();
-                seedData();
+                // seedData();
             }).catch(error => (console.log(error)));
             console.log('Data Base Connected Successfully');
         });

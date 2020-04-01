@@ -7,6 +7,8 @@ import notFoundRoutes from './libs/routes/notFoundRoute';
 import routes from './router';
 import Database from './libs/Database';
 
+
+let cors = require('cors');
 interface User {
   name: string;
   id: string;
@@ -54,6 +56,7 @@ class ServerM1 {
 
   setupRoutes = (): ServerM1 => {
     const { app } = this;
+    app.use(cors());
     app.use('/api', routes);
     app.use(notFoundRoutes);
     app.use(errorHandler);

@@ -20,8 +20,6 @@ class UserRepository extends VersionableRepository<IUserModel, mongoose.Model<IU
     return super.count();
   };
 
-
-
   list = (query: any = {}, options: any = {}) => {
     return super.list(query, options);
   };

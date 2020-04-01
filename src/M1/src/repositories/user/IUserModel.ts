@@ -7,6 +7,6 @@ export default interface IUserModel extends IVersionableDocument {
   keyCount: number;
   depth: number;
   originalId: string;
-  size: number;
+  size: string;
   generationTime: number;
 }

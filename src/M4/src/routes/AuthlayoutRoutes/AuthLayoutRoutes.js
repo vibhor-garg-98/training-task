@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 import { Route } from 'react-router-dom';
-import  AuthLayout  from '../../layout/authLayout/AuthLayout';
+import AuthLayout from '../../layout/authLayout/AuthLayout';
 
 const AuthLayoutRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -16,7 +16,5 @@ const AuthLayoutRoute = ({ component: Component, ...rest }) => (
 export default AuthLayoutRoute;
 
 AuthLayoutRoute.propTypes = {
-
   component: propTypes.elementType.isRequired,
-
 };

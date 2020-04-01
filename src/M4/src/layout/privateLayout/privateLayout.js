@@ -1,9 +1,11 @@
-import React from 'react';
+import React from "react";
+import Navbar from "../Navbar/Navbar";
 
 const PrivateLayout = ({ children, ...rest }) => (
   <>
+    <Navbar />
     <br />
-    <div>{children}</div>
+    {children}
   </>
 );
 export default PrivateLayout;

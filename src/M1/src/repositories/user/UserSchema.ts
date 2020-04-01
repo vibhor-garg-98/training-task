@@ -9,7 +9,7 @@ class UserSchema extends VersionableSchema {
       keyCount: Number,
       depth: Number,
       originalId: String,
-      size: Number,
+      size: String,
       generationTime: Number,
     };
     super(userSchema, option);

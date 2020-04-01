@@ -30,7 +30,6 @@ class VersionableRepository<D extends mongoose.Document, M extends mongoose.Mode
     const originalId = data.id;
     delete data.id;
     data = { ...data, originalId };
-    console.log('----------my Sort get--------------', data);
     return await this.modelType.findOne({ ...data, deletedAt: undefined }).lean();
   }
 
