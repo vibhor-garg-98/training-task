@@ -17,7 +17,7 @@
     "lint": "./node_modules/tslint/bin/tslint -c tslint.json -p tsconfig.json --exclude 'node_modules/**/*.{j,t}s'",
     "lint:fix": "npm run lint --fix",
     "start:express": "node src/index.ts",
-    "dev": "concurrently \"npm start\" \"cd src/M4 && npm start\" "
+    "dev": "concurrently \"npm start\" \"cd M4 && npm start\" "
   },
   "repository": {
     "type": "git",
