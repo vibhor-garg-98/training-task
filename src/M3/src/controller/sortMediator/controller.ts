@@ -15,21 +15,21 @@ class SortMediatorController {
   };
 
   put = async (req: Request, res: Response) => {
-    const { id } = req.body;
+    const { id, sortingAlgorithm } = req.body;
     const response = await axios.get('http://localhost:9000/api/unsortCreate', {
       params: {
         id
       }
     });
-
     const sortObject: any = await axios({
       method: 'post',
       url: 'http://localhost:9001/api/sorting/',
       data: {
-        data: response.data.data
+        data: response.data.data,
+        sortAlgorithm: sortingAlgorithm
       }
     });
-    const { data } = sortObject.data;
+    const { data } = sortObject;
     const { newObj, sortTime } = data;
     const updateData = await axios({
       method: 'put',
@@ -43,10 +43,9 @@ class SortMediatorController {
       method: 'post',
       url: 'http://localhost:9000/api/sortStats/',
       data: {
-        data: { id, sortDuration: sortTime }
+        data: { id, sortDuration: sortTime, sortAlgorithm: sortingAlgorithm }
       }
     });
-
     res.send(createSortStats.data);
   };
 

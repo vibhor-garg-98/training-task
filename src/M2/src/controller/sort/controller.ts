@@ -132,8 +132,8 @@ class SortedController {
     try {
       let newObj;
       let id;
-      const { data } = req.body;
       const performance = require('performance-now');
+      const { data, sortAlgorithm } = req.body;
 
       if (this.isEmpty(data)) {
         return next({
@@ -143,12 +143,64 @@ class SortedController {
           status: 500
        });
       }
-      const start = performance();
-      const result = this.mergeSort(Object.keys(data.obj));
-      newObj = this.adjust(result, data.obj, this.mergeSort);
-      id = data._id;
-      const end = performance();
-      SystemResponse.success(res, { newObj, sortTime: (end - start), }, 'ccccc');
+
+      switch (sortAlgorithm) {
+
+        case 'Bubble Sort': {
+          console.log('Bubble Sort');
+          const start = performance();
+          const result = this.bubbleSort(Object.keys(data.obj));
+          newObj = this.adjust(result, data.obj, this.bubbleSort);
+          id = data._id;
+          const end = performance();
+          res.send({ newObj, sortTime: (end - start), sortingAlgorithm: sortAlgorithm });
+          break;
+        }
+
+        case 'Selection Sort': {
+          console.log('Selection Sort');
+          const start = performance();
+          const result = this.selectionSort(Object.keys(data.obj));
+          newObj = this.adjust(result, data.obj, this.selectionSort);
+          id = data._id;
+          const end = performance();
+          res.send({ newObj, sortTime: (end - start), sortingAlgorithm: sortAlgorithm });
+          break;
+        }
+
+        case 'Insertion Sort': {
+          console.log('Insertion Sort');
+          const start = performance();
+          const result = this.insertionSort(Object.keys(data.obj));
+          newObj = this.adjust(result, data.obj, this.insertionSort);
+          id = data._id;
+          const end = performance();
+          res.send({ newObj, sortTime: (end - start), sortingAlgorithm: sortAlgorithm });
+          break;
+        }
+
+        case 'Merge Sort': {
+          console.log('MergeSort');
+          const start = performance();
+          const result = this.mergeSort(Object.keys(data.obj));
+          newObj = this.adjust(result, data.obj, this.mergeSort);
+          id = data._id;
+          const end = performance();
+          res.send({ newObj, sortTime: (end - start), sortingAlgorithm: sortAlgorithm });
+          break;
+        }
+
+        default: {
+          console.log('default');
+          const start = performance();
+          const result = this.mergeSort(Object.keys(data.obj));
+          newObj = this.adjust(result, data.obj, this.mergeSort);
+          id = data._id;
+          const end = performance();
+          res.send({ newObj, sortTime: (end - start), sortingAlgorithm: 'Merge Sort' });
+        }
+
+      }
     }
     catch (error) {
      throw error;

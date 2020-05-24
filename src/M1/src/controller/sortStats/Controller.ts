@@ -16,16 +16,16 @@ class SortStatsController {
   post = async (req: Request, res: Response) => {
     try {
       const { data } = req.body;
-      const { id, sortDuration } = data;
+      const { id, sortDuration, sortAlgorithm } = data;
       const prevSort = await this.userRepository.get({ objectId: id });
       if (!prevSort) {
-        const options = { objectId: id, sortDuration };
+        const options = { objectId: id, sortDuration,  sortingAlgorithm: sortAlgorithm};
         const sortStats = await this.userRepository.create(options);
         res.send(sortStats);
       } else {
         const updateSort = await this.userRepository.update(
           { objectId: id },
-          { sortDuration }
+          {  sortingAlgorithm: sortAlgorithm, sortDuration },
         );
         res.send(updateSort);
       }

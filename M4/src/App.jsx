@@ -6,6 +6,7 @@ import TextFields from './pages/component/textField/textField';
 import ViewRoutes from './pages/component/viewpage/viewRouter';
 import AuthlayoutRoute from './routes/AuthlayoutRoutes/AuthLayoutRoutes';
 import PrivatelayoutRoute from './routes/PrivatelayoutRoute/PrivatelayoutRoute';
+import NotFound from './pages/NoMatch/NoMatch';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       </Route>
       <AuthlayoutRoute exact path="/createObject" component={TextFields} />
       <PrivatelayoutRoute path="/objectTable" component={ViewRoutes} />
+      <PrivatelayoutRoute  component={NotFound} />
     </Switch>
   </Router>
   );

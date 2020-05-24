@@ -12,18 +12,29 @@ import {
   Button,
   CircularProgress,
   Box,
-  TableRow
+  TableRow,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
 } from "@material-ui/core";
 import Linktag from "@material-ui/core/Link";
 
-const useStyles = theme => ({
+const useStyles = (theme) => ({
   table: {
-    minWidth: 650
+    minWidth: 650,
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120
-  }
+    minWidth: 120,
+  },
+  container: {
+    marginBottom: theme.spacing(2),
+    height: 400,
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+    overflow: 'auto',
+    },
 });
 
 class SimpleTable extends React.Component {
@@ -33,7 +44,9 @@ class SimpleTable extends React.Component {
       array: [],
       open: false,
       sortTime: {},
-      loading: false
+      loading: false,
+      sortAlgorithm: "",
+      sort: "",
     };
   }
 
@@ -41,75 +54,97 @@ class SimpleTable extends React.Component {
     const response = await axios.get("http://localhost:9002/api/unsort/");
     this.setState({
       array: response.data,
-      open: true
+      open: true,
     });
     const { sortTime } = this.state;
     const response1 = await axios.get("http://localhost:9002/api/sort/");
-    response1.data.forEach(element => {
-      response.data.forEach(value => {
+    response1.data.forEach((element) => {
+      response.data.forEach((value) => {
         if (element.objectId === value.originalId) {
           this.setState({
             sortTime: {
               ...sortTime,
-              [value.originalId]: element.sortDuration
-            }
+              [value.originalId]: element.sortDuration,
+            },
           });
         }
       });
     });
   };
 
-  perticularSortButton = async value => {
-    await axios.put("http://localhost:9002/api/sort/", {
-      id: value
-    });
-    const objectId = value;
-    this.setState({
-      loading: true
-    });
-    const response1 = await axios.get("http://localhost:9002/api/sort/", {
-      params: {
-        objectId
-      }
-    });
-    const { loading } = this.state;
-    const { sortTime } = this.state;
-    this.setState(
-      {
-        sortTime: {
-          ...sortTime,
-          [value]: response1.data.sortDuration
+  perticularSortButton = async (value) => {
+    const { sortAlgorithm } = this.state;
+    if (sortAlgorithm) {
+      await axios.put("http://localhost:9002/api/sort/", {
+        id: value,
+        sortingAlgorithm: sortAlgorithm,
+      });
+      const objectId = value;
+      this.setState({
+        loading: true,
+      });
+      const response1 = await axios.get("http://localhost:9002/api/sort/", {
+        params: {
+          objectId,
+        },
+      });
+      const { sortTime } = this.state;
+      this.setState(
+        {
+          sortTime: {
+            ...sortTime,
+            [value]: response1.data.sortDuration,
+          },
+          sortAlgorithm: "",
+        },
+        () => {
+          this.setState({
+            loading: false,
+          });
         }
-      },
-      () => {
-        this.setState({
-          loading: false
-        });
-      }
-    );
+      );
+    }
   };
 
   allSortButton = async () => {
-    const response = await axios.get("http://localhost:9002/api/unsort/");
+    const { sortAlgorithm } = this.state;
+    if (sortAlgorithm) {
+      const response = await axios.get("http://localhost:9002/api/unsort/");
+      const parsedvalues = {};
+      if (response.data) {
+        response.data.forEach(async (element) => {
+          await axios.put("http://localhost:9002/api/sort/", {
+            id: element.originalId,
+            sortingAlgorithm: sortAlgorithm,
+          });
+          const objectId = element.originalId;
+          const response1 = await axios.get("http://localhost:9002/api/sort/", {
+            params: {
+              objectId,
+            },
+          });
+          parsedvalues[objectId] = response1.data.sortDuration;
+          this.setState({
+            sortTime: parsedvalues,
+          });
+        });
+      } else {
+        alert ('No Object found')
+      }
+    }
+  };
 
-    response.data.map(element => {
-      axios.put("http://localhost:9002/api/sort/", {
-        id: element.originalId
-      });
-      const objectId = element.originalId;
-      const response1 = axios.get("http://localhost:9002/api/sort/", {
-        params: {
-          objectId
-        }
-      });
+  handleSelectChange = (values) => {
+    this.setState({ sortAlgorithm: values.target.value }, () => {
+      console.log(this.state);
     });
   };
 
   render() {
     const {
-      match: { url }
+      match: { url },
     } = this.props;
-    const { array, open, sortTime, loading } = this.state;
+    const { array, open, sortTime, loading, sortAlgorithm } = this.state;
     const { classes } = this.props;
     return (
       <>
@@ -126,9 +161,33 @@ class SimpleTable extends React.Component {
             Show data
           </Button>
         </div>
+        <Box marginBottom="20px" marginTop="20px" width="70vw" />
         {open && (
           <>
-            <TableContainer component={Paper}>
+            <TableCell>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-required-label">
+                  Alogrithm
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  label="Algorithm"
+                  value={sortAlgorithm}
+                  onChange={this.handleSelectChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="Bubble Sort">Bubble Sort</MenuItem>
+                  <MenuItem value="Selection Sort">Selection Sort</MenuItem>
+                  <MenuItem value="Insertion Sort">Insertion Sort</MenuItem>
+                  <MenuItem value="Merge Sort">Merge Sort</MenuItem>
+                </Select>
+              </FormControl>
+            </TableCell>
+            <Box marginBottom="20px" marginTop="20px" width="70vw" />
+            <TableContainer component={Paper} className={classes.container}>
               <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                   <TableRow>
@@ -139,40 +198,41 @@ class SimpleTable extends React.Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {array.map(row => (
-                    <>
-                      <TableRow key={row.originalId}>
-                        <TableCell align="left">{row.originalId}</TableCell>
-
-                        <TableCell align="left">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => {
-                              this.perticularSortButton(row.originalId);
-                            }}
-                          >
-                            Sort Object
-                          </Button>
-                          {loading && <CircularProgress />}
-                        </TableCell>
-                        <TableCell align="left">
-                          {sortTime ? sortTime[row.originalId] : "NA"}
-                        </TableCell>
-                        <TableCell align="left">
-                          <Fragment key={row.originalId}>
-                            <Linktag
-                              href="#"
-                              component={Link}
-                              to={`${url}/${row.originalId}`}
+                  {array &&
+                    array.length &&
+                    array.map((row) => (
+                      <>
+                        <TableRow key={row.originalId}>
+                          <TableCell align="left">{row.originalId}</TableCell>
+                          <TableCell align="left">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => {
+                                this.perticularSortButton(row.originalId);
+                              }}
                             >
-                              time history
-                            </Linktag>
-                          </Fragment>
-                        </TableCell>
-                      </TableRow>
-                    </>
-                  ))}
+                              Sort Object
+                            </Button>
+                            {loading && <CircularProgress />}
+                          </TableCell>
+                          <TableCell align="left">
+                            {sortTime ? sortTime[row.originalId] : "NA"}
+                          </TableCell>
+                          <TableCell align="left">
+                            <Fragment key={row.originalId}>
+                              <Linktag
+                                href="#"
+                                component={Link}
+                                to={`${url}/${row.originalId}`}
+                              >
+                                time history
+                              </Linktag>
+                            </Fragment>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>

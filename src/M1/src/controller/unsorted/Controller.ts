@@ -37,7 +37,7 @@ class UnsortedController {
         const data = await this.userRepository.create(options);
         SystemResponse.success(res, data,  'Unsorted object Created Successfully');
        } else {
-        res.send({message: 'depth must be less than keyCount' });
+        SystemResponse.success(res, {data: 'depth must be less than keyCount' });
        }
     }
     catch (error) {

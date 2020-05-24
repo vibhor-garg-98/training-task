@@ -1,7 +1,7 @@
-import UserRepository from '../../../../M1/src/repositories/user/UserRepository';
-import SystemResponse from '../../../../M1/src/libs/SystemResponse';
 import { Request, Response } from 'express';
 import axios from 'axios';
+import UserRepository from '../../../../M1/src/repositories/user/UserRepository';
+import SystemResponse from '../../../../M1/src/libs/SystemResponse';
 
 class MediatorController {
   private userRepository = new UserRepository();
@@ -27,7 +27,7 @@ class MediatorController {
         }
       });
       const { data } = response.data;
-      SystemResponse.success(res, data, 'object created successfully');
+      SystemResponse.success(res, data);
     } catch (error) {
       throw error;
     }
