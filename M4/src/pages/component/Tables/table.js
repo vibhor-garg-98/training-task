@@ -31,10 +31,10 @@ const useStyles = (theme) => ({
   container: {
     marginBottom: theme.spacing(2),
     height: 400,
-    width: '100%',
+    width: "100%",
     marginTop: theme.spacing.unit * 3,
-    overflow: 'auto',
-    },
+    overflow: "auto",
+  },
 });
 
 class SimpleTable extends React.Component {
@@ -56,20 +56,24 @@ class SimpleTable extends React.Component {
       array: response.data,
       open: true,
     });
-    const { sortTime } = this.state;
-    const response1 = await axios.get("http://localhost:9002/api/sort/");
-    response1.data.forEach((element) => {
-      response.data.forEach((value) => {
-        if (element.objectId === value.originalId) {
-          this.setState({
-            sortTime: {
-              ...sortTime,
-              [value.originalId]: element.sortDuration,
-            },
-          });
-        }
+    if (response.data) {
+      const { sortTime } = this.state;
+      const response1 = await axios.get("http://localhost:9002/api/sort/");
+      response1.data.forEach((element) => {
+        response.data.forEach((value) => {
+          if (element.objectId === value.originalId) {
+            this.setState({
+              sortTime: {
+                ...sortTime,
+                [value.originalId]: element.sortDuration,
+              },
+            });
+          }
+        });
       });
-    });
+    } else {
+      alert('No Data Found')
+    }
   };
 
   perticularSortButton = async (value) => {
@@ -129,7 +133,7 @@ class SimpleTable extends React.Component {
           });
         });
       } else {
-        alert ('No Object found')
+        alert("No Object found");
       }
     }
   };

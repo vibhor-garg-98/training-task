@@ -8,13 +8,13 @@ import { withStyles } from '@material-ui/core/styles';
 const schema = yup.object().shape({
   keyCount: yup
     .string()
-    .matches(/^([2-9]|1[0])$/, 'KeyCount is invalid')
+    .matches(/^([2-9]|[0-9][0-9])$/, 'KeyCount is invalid')
     .required('keyCount is required')
     .label('KeyCount')
   ,
   depth: yup
     .string()
-    .matches(/^([1-9]|1[0])$/, 'depth is invalid')
+    .matches(/^([1-9]|[0-9][0-9])$/, 'depth is invalid')
     .required('depth is required')
     .label('Depth')
   ,
